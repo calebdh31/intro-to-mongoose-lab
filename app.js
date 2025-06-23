@@ -5,14 +5,16 @@ const prompt =  require('prompt-sync')()
 const mongoose = require('mongoose')
 const Customer = require('./models/Customer')
 
+console.log('Starting app...')
+
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
+    .then(async () => {
         console.log('MongoDB connected')
-        // mainMenu()
+        await mainMenu()
     })
     .catch(err => console.log(err))
 
-function mainMenu() {
+async function mainMenu() {
   console.log('Inside mainMenu')  
   console.log('\nWelcome to the CRM')
   console.log('\nWhat would you like to do?')
@@ -23,10 +25,10 @@ function mainMenu() {
   console.log('  5. Quit\n')
 
   const choice = prompt('Number of action to run: ')
-  doSomething(choice)
+  await doSomething(choice)
 }
 
-function doSomething (action) {
+async function doSomething (action) {
   
   switch (action) {
     case '1':
@@ -85,5 +87,3 @@ async function deleteCustomer () {
     console.log('\n Customer deleted.\n')
 mainMenu()
 }
-
-mainMenu()
