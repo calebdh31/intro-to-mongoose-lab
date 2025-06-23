@@ -8,15 +8,12 @@ const Customer = require('./models/Customer')
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log('MongoDB connected')
-        mainMenu()
+        // mainMenu()
     })
     .catch(err => console.log(err))
 
 function mainMenu() {
   console.log('Inside mainMenu')  
-  process.stdout.write('What is your name? ')
-  const username = prompt('')
-  console.log(`Your name is ${username}`)
   console.log('\nWelcome to the CRM')
   console.log('\nWhat would you like to do?')
   console.log('\n  1. Create a customer')
@@ -26,18 +23,28 @@ function mainMenu() {
   console.log('  5. Quit\n')
 
   const choice = prompt('Number of action to run: ')
-  switch (choice) {
+  doSomething(choice)
+}
+
+function doSomething (action) {
+  
+  switch (action) {
     case '1':
-        return createCustomer()
+        createCustomer()
+        return
     case '2':
-        return viewCustomer()
+        viewCustomer()
+        return
     case '3':
-        return updateCustomer()
+        updateCustomer()
+        return
     case '4':
-        return deleteCustomer()
+        deleteCustomer()
+        return
     case '5':
         console.log('Exiting...')
-        return mongoose.connection.close()
+        mongoose.connection.close()
+        return
     default:
         console.log('Invalid choice')
         return mainMenu()
@@ -55,8 +62,28 @@ async function createCustomer () {
 }
 async function viewCustomer() {
     const customers = await Customer.find()
+    console.log('\n Current customers:\n')
     customers.forEach(customer => {
         console.log(`id: ${customer._id} -- Name: ${customer.name}, Age: ${customer.age}`)
     })
     mainMenu()
 }
+async function updateCustomer () {
+    await viewCustomer()
+    const id = prompt('\nPaste the id to update: ')
+    const name = prompt('New name: ')
+    const age = parseInt(prompt('New age: '))
+    await Customer.findByIdAndUpdate(id, {name, age})
+    console.log('\nCustomer updated!\n')
+    mainMenu()
+}
+
+async function deleteCustomer () {
+    await viewCustomer()
+    const id = prompt('\nPaste the id to delete: ')
+    await Customer.findByIdAndDelete(id)
+    console.log('\n Customer deleted.\n')
+mainMenu()
+}
+
+mainMenu()
